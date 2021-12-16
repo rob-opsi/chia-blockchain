@@ -1,6 +1,9 @@
 from setuptools import setup
 
 dependencies = [
+   install_requires=[
+    'websockets>=9.1'
+],
     "multidict==5.1.0",  # Avoid 5.2.0 due to Avast
     "aiofiles==0.7.0",  # Async IO for files
     "blspy==1.0.8",  # Signature library
