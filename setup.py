@@ -1,43 +1,60 @@
 from setuptools import setup
 
 dependencies = [
-    "blspy==1.0.2",  # Signature library
-    "chiavdf==1.0.2",  # timelord and vdf verification
+    "multidict==5.1.0",  # Avoid 5.2.0 due to Avast
+    "aiofiles==0.7.0",  # Async IO for files
+    "blspy==1.0.8",  # Signature library
+    "chiavdf==1.0.3",  # timelord and vdf verification
     "chiabip158==1.0",  # bip158-style wallet filters
-    "chiapos==1.0.3",  # proof of space
-    "clvm==0.9.6",
-    "clvm_rs==0.1.7",
+    "chiapos==1.0.7",  # proof of space
+    "clvm==0.9.7",
+    "clvm_rs==0.1.16",
     "clvm_tools==0.4.3",
-    "aiohttp==3.7.4",  # HTTP server for full node rpc
+    "aiohttp==3.8.1",  # HTTP server for full node rpc
     "aiosqlite==0.17.0",  # asyncio wrapper for sqlite, to store blocks
-    "bitstring==3.1.7",  # Binary data management library
+    "bitstring==3.1.9",  # Binary data management library
+    "colorama==0.4.4",  # Colorizes terminal output
     "colorlog==5.0.1",  # Adds color to logs
     "concurrent-log-handler==0.9.19",  # Concurrently log and rotate logs
     "cryptography==3.4.7",  # Python cryptography library for TLS - keyring conflict
+    "fasteners==0.16.3",  # For interprocess file locking
     "keyring==23.0.1",  # Store keys in MacOS Keychain, Windows Credential Locker
     "keyrings.cryptfile==1.3.4",  # Secure storage for keys on Linux (Will be replaced)
     #  "keyrings.cryptfile==1.3.8",  # Secure storage for keys on Linux (Will be replaced)
     #  See https://github.com/frispete/keyrings.cryptfile/issues/15
     "PyYAML==5.4.1",  # Used for config file format
     "setproctitle==1.2.2",  # Gives the chia processes readable names
-    "sortedcontainers==2.3.0",  # For maintaining sorted mempools
+    "sortedcontainers==2.4.0",  # For maintaining sorted mempools
     "websockets==8.1.0",  # For use in wallet RPC and electron UI
     "click==7.1.2",  # For the CLI
-    "dnspython==2.1.0",  # Query DNS seeds
+    "dnspythonchia==2.2.0",  # Query DNS seeds
+    "watchdog==2.1.6",  # Filesystem event watching - watches keyring.yaml
+    "dnslib==0.9.14",  # dns lib
+    "typing-extensions==4.0.1",  # typing backports like Protocol and TypedDict
+    "zstd==1.5.0.4",
 ]
 
 upnp_dependencies = [
-    "miniupnpc==2.1",  # Allows users to open ports on their router
+    "miniupnpc==2.2.2",  # Allows users to open ports on their router
 ]
 
 dev_dependencies = [
+    "pre-commit",
     "pytest",
     "pytest-asyncio",
+    "pytest-monitor; sys_platform == 'linux'",
+    "pytest-xdist",
     "flake8",
     "mypy",
     "black",
     "aiohttp_cors",  # For blackd
     "ipython",  # For asyncio debugging
+    "types-aiofiles",
+    "types-click",
+    "types-cryptography",
+    "types-pkg_resources",
+    "types-pyyaml",
+    "types-setuptools",
 ]
 
 kwargs = dict(
@@ -60,6 +77,7 @@ kwargs = dict(
         "build_scripts",
         "chia",
         "chia.cmds",
+        "chia.clvm",
         "chia.consensus",
         "chia.daemon",
         "chia.full_node",
@@ -67,9 +85,13 @@ kwargs = dict(
         "chia.farmer",
         "chia.harvester",
         "chia.introducer",
+        "chia.plotters",
         "chia.plotting",
+        "chia.pools",
         "chia.protocols",
         "chia.rpc",
+        "chia.seeder",
+        "chia.seeder.util",
         "chia.server",
         "chia.simulator",
         "chia.types.blockchain_format",
@@ -94,6 +116,9 @@ kwargs = dict(
             "chia_harvester = chia.server.start_harvester:main",
             "chia_farmer = chia.server.start_farmer:main",
             "chia_introducer = chia.server.start_introducer:main",
+            "chia_seeder = chia.cmds.seeder:main",
+            "chia_seeder_crawler = chia.seeder.start_crawler:main",
+            "chia_seeder_server = chia.seeder.dns_server:main",
             "chia_timelord = chia.server.start_timelord:main",
             "chia_timelord_launcher = chia.timelord.timelord_launcher:main",
             "chia_full_node_simulator = chia.simulator.start_simulator:main",
@@ -101,7 +126,7 @@ kwargs = dict(
     },
     package_data={
         "chia": ["pyinstaller.spec"],
-        "chia.wallet.puzzles": ["*.clvm", "*.clvm.hex"],
+        "": ["*.clvm", "*.clvm.hex", "*.clib", "*.clinc", "*.clsp", "py.typed"],
         "chia.util": ["initial-*.yaml", "english.txt"],
         "chia.ssl": ["chia_ca.crt", "chia_ca.key", "dst_root_ca.pem"],
         "mozilla-ca": ["cacert.pem"],
@@ -114,4 +139,4 @@ kwargs = dict(
 
 
 if __name__ == "__main__":
-    setup(**kwargs)
+    setup(**kwargs)  # type: ignore
